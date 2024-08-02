@@ -1,0 +1,21 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "virtualMachines_iagora_name": {
+            "value": null
+        },
+        "publicIPAddresses_iagora_ip_name": {
+            "value": null
+        },
+        "virtualNetworks_iagora_vnet_name": {
+            "value": null
+        },
+        "networkInterfaces_iagora731_z1_name": {
+            "value": null
+        },
+        "networkSecurityGroups_iagora_nsg_name": {
+            "value": null
+        }
+    }
+}
