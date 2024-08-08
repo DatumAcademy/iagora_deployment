@@ -233,11 +233,6 @@ resource networkInterfaces_iagora731_z1_name_resource 'Microsoft.Network/network
   name: networkInterfaces_iagora731_z1_name
   location: 'francecentral'
   //kind: 'Regular'
-  dependsOn: [
-    //publicIPAddresses_iagora_ip_name_resource
-    //virtualNetworks_iagora_vnet_name_default
-    //networkSecurityGroups_iagora_nsg_name_resource
-  ]
   properties: {
     ipConfigurations: [
       {
