@@ -92,7 +92,7 @@ resource publicIPAddresses_iagora_ip_name_resource 'Microsoft.Network/publicIPAd
   }
 }
 
-// VIRTUAL NETWORK RESSOURC
+// VIRTUAL NETWORK RESSOURCE
 
 resource virtualNetworks_iagora_vnet_name_resource 'Microsoft.Network/virtualNetworks@2023-11-01' = {
   name: virtualNetworks_iagora_vnet_name
