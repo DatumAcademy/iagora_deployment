@@ -32,8 +32,6 @@ resource networkSecurityGroups 'Microsoft.Network/networkSecurityGroups@2023-11-
       }
       {
         name: 'HTTP'
-        //id: networkSecurityGroups_iagora_nsg_name_HTTP.id
-        //type: 'Microsoft.Network/networkSecurityGroups/securityRules'
         properties: {
           protocol: 'TCP'
           sourcePortRange: '*'
