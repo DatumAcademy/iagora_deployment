@@ -9,7 +9,6 @@ param vmSize string = 'Standard_B2s'
 //NSG ressourc
 resource networkSecurityGroups 'Microsoft.Network/networkSecurityGroups@2023-11-01' = {
   name: networkSecurityGroups_iagora_nsg_name
-  //name:'iagora-nsg'
   location: 'francecentral'
   properties: {
     securityRules: [
