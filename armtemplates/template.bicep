@@ -121,7 +121,7 @@ resource virtualNetworks_iagora_vnet_name_resource 'Microsoft.Network/virtualNet
   }
 }
 
-// VIRTUAL MACHINE
+// VIRTUAL MACHINE RESSOURCE
 
 resource virtualMachines_iagora_name_resource 'Microsoft.Compute/virtualMachines@2024-03-01' = {
   name: virtualMachines_iagora_name
