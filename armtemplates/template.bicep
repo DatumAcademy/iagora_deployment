@@ -74,7 +74,7 @@ resource networkSecurityGroups_iagora_nsg_name_resource 'Microsoft.Network/netwo
 }
 
 
-//PULIC IP ADDRESS RESSOURC
+// PUBLIC IP ADDRESS RESSOURCE
 
 resource publicIPAddresses_iagora_ip_name_resource 'Microsoft.Network/publicIPAddresses@2023-11-01' = {
   name: publicIPAddresses_iagora_ip_name
