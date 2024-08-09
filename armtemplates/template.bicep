@@ -1,14 +1,14 @@
-param virtualMachines_iagora_name string = 'iagora'
-param publicIPAddresses_iagora_ip_name string = 'iagora-ip'
-param virtualNetworks_iagora_vnet_name string = 'iagora-vnet'
-param networkInterfaces_iagora731_z1_name string = 'iagora731_z1'
-param networkSecurityGroups_iagora_nsg_name string = 'iagora-nsg'
+param virtualMachines string = 'iagora'
+param publicIPAddresses string = 'iagora-ip'
+param virtualNetworks string = 'iagora-vnet'
+param networkInterfaces string = 'iagora731_z1'
+param networkSecurityGroups string = 'iagora-nsg'
 param sshPublicKey string 
 param vmSize string = 'Standard_B2s' 
 
-//NSG ressourc
+//networking security group ressource
 resource networkSecurityGroups 'Microsoft.Network/networkSecurityGroups@2023-11-01' = {
-  name: networkSecurityGroups_iagora_nsg_name
+  name: networkSecurityGroups
   location: 'francecentral'
   properties: {
     securityRules: [
@@ -49,8 +49,6 @@ resource networkSecurityGroups 'Microsoft.Network/networkSecurityGroups@2023-11-
       }
       {
         name: 'HTTPS'
-       // id: networkSecurityGroups_iagora_nsg_name_HTTPS.id
-        //type: 'Microsoft.Network/networkSecurityGroups/securityRules'
         properties: {
           protocol: 'TCP'
           sourcePortRange: '*'
@@ -71,10 +69,9 @@ resource networkSecurityGroups 'Microsoft.Network/networkSecurityGroups@2023-11-
 }
 
 
-// PUBLIC IP ADDRESS RESSOURCE
-
-resource publicIPAddresses_iagora_ip_name_resource 'Microsoft.Network/publicIPAddresses@2023-11-01' = {
-  name: publicIPAddresses_iagora_ip_name
+// public IP address name
+resource publicIPAddresses_resource 'Microsoft.Network/publicIPAddresses@2023-11-01' = {
+  name: publicIPAddresses
   location: 'francecentral'
   sku: {
     name: 'Standard'
@@ -92,10 +89,9 @@ resource publicIPAddresses_iagora_ip_name_resource 'Microsoft.Network/publicIPAd
   }
 }
 
-// VIRTUAL NETWORK RESSOURCE
-
-resource virtualNetworks_iagora_vnet_name_resource 'Microsoft.Network/virtualNetworks@2023-11-01' = {
-  name: virtualNetworks_iagora_vnet_name
+// virtual network resource
+resource virtualNetworks_resource 'Microsoft.Network/virtualNetworks@2023-11-01' = {
+  name: virtualNetworks
   location: 'francecentral'
   properties: {
     addressSpace: {
@@ -106,7 +102,6 @@ resource virtualNetworks_iagora_vnet_name_resource 'Microsoft.Network/virtualNet
     subnets: [
       {
         name: 'default'
-        //id: virtualNetworks_iagora_vnet_name_default.id
         properties: {
           addressPrefix: '10.0.0.0/24'
           delegations: []
@@ -121,10 +116,9 @@ resource virtualNetworks_iagora_vnet_name_resource 'Microsoft.Network/virtualNet
   }
 }
 
-// VIRTUAL MACHINE RESSOURCE
-
-resource virtualMachines_iagora_name_resource 'Microsoft.Compute/virtualMachines@2024-03-01' = {
-  name: virtualMachines_iagora_name
+// virtual machine resource
+resource virtualMachines_resource 'Microsoft.Compute/virtualMachines@2024-03-01' = {
+  name: virtualMachines
   location: 'francecentral'
   zones: [
     '1'
@@ -145,15 +139,11 @@ resource virtualMachines_iagora_name_resource 'Microsoft.Compute/virtualMachines
       }
       osDisk: {
         osType: 'Linux'
-        name: '${virtualMachines_iagora_name}_OsDisk_1_bcb7e14b83d24fc7a077197bdf465401'
+        name: '${virtualMachines}_OsDisk_1_bcb7e14b83d24fc7a077197bdf465401'
         createOption: 'FromImage'
         caching: 'ReadWrite'
         managedDisk: {
           storageAccountType: 'Premium_LRS'
-          /*id: resourceId(
-            'Microsoft.Compute/disks',
-            '${virtualMachines_iagora_name}_OsDisk_1_bcb7e14b83d24fc7a077197bdf465401'
-          )*/
         }
         deleteOption: 'Delete'
         diskSizeGB: 30
@@ -162,14 +152,14 @@ resource virtualMachines_iagora_name_resource 'Microsoft.Compute/virtualMachines
       diskControllerType: 'SCSI'
     }
     osProfile: {
-      computerName: virtualMachines_iagora_name
-      adminUsername: virtualMachines_iagora_name
+      computerName: virtualMachines
+      adminUsername: virtualMachines
       linuxConfiguration: {
         disablePasswordAuthentication: true
         ssh: {
           publicKeys: [
             {
-              path: '/home/${virtualMachines_iagora_name}/.ssh/authorized_keys'
+              path: '/home/${virtualMachines}/.ssh/authorized_keys'
               keyData: sshPublicKey 
             }
           ]
@@ -198,7 +188,7 @@ resource virtualMachines_iagora_name_resource 'Microsoft.Compute/virtualMachines
     networkProfile: {
       networkInterfaces: [
         {
-          id: networkInterfaces_iagora731_z1_name_resource.id
+          id: networkInterfaces_resource.id
           properties: {
             deleteOption: 'Detach'
           }
@@ -213,11 +203,10 @@ resource virtualMachines_iagora_name_resource 'Microsoft.Compute/virtualMachines
   }
 }
 
-//subnet ressourc
-
-resource virtualNetworks_iagora_vnet_name_default 'Microsoft.Network/virtualNetworks/subnets@2023-11-01' = {
+//subnet ressource
+resource virtualNetworks_default 'Microsoft.Network/virtualNetworks/subnets@2023-11-01' = {
   name: 'default'
-  parent:virtualNetworks_iagora_vnet_name_resource
+  parent:virtualNetworks_iagora_resource
   properties: {
     addressPrefix: '10.0.0.0/24'
     delegations: []
@@ -227,29 +216,28 @@ resource virtualNetworks_iagora_vnet_name_default 'Microsoft.Network/virtualNetw
   
 }
 
-//interface ressour
+//interface ressource
 
-resource networkInterfaces_iagora731_z1_name_resource 'Microsoft.Network/networkInterfaces@2023-11-01' = {
-  name: networkInterfaces_iagora731_z1_name
+resource networkInterfaces_resource 'Microsoft.Network/networkInterfaces@2023-11-01' = {
+  name: networkInterfaces
   location: 'francecentral'
-  //kind: 'Regular'
   properties: {
     ipConfigurations: [
       {
         name: 'ipconfig1'
-        //id: '${networkInterfaces_iagora731_z1_name_resource.id}/ipConfigurations/ipconfig1'
+        //id: '${networkInterfaces_resource.id}/ipConfigurations/ipconfig1'
         //type: 'Microsoft.Network/networkInterfaces/ipConfigurations'
         properties: {
           privateIPAddress: '10.0.0.4'
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddresses_iagora_ip_name_resource.id
+            id: publicIPAddresses_resource.id
             properties: {
               deleteOption: 'Detach'
             }
           }
           subnet: {
-            id: virtualNetworks_iagora_vnet_name_default.id
+            id: virtualNetworks_default.id
           }
           primary: true
           privateIPAddressVersion: 'IPv4'
@@ -263,7 +251,7 @@ resource networkInterfaces_iagora731_z1_name_resource 'Microsoft.Network/network
     enableIPForwarding: false
     disableTcpStateTracking: false
     networkSecurityGroup: {
-      id: networkSecurityGroups_iagora_nsg_name_resource.id
+      id: networkSecurityGroups_resource.id
     }
     nicType: 'Standard'
     auxiliaryMode: 'None'
