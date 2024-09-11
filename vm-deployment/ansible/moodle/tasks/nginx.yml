@@ -1,0 +1,35 @@
+---
+# Install and configure nginx server.
+
+- name: Assert nginx port is set
+  ansible.builtin.assert:
+    msg: ERROR - nginx_port variable is not set
+    that:
+      - nginx_port is defined
+      - nginx_port is number
+
+- name: Install nginx HTTP server
+  ansible.builtin.apt:
+    name: nginx
+    install_recommends: false
+
+- name: Set default nginx server configuration
+  ansible.builtin.template:
+    src: templates/nginx/default.j2
+    dest: /etc/nginx/sites-available/default
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - Restart nginx service
+
+- name: Ensure no index.nginx-debian.html is placed in /var/www/html directory
+  ansible.builtin.file:
+    path: /var/www/html/index.nginx-debian.html
+    state: absent
+
+- name: Ensure that nginx service is enabled and started
+  ansible.builtin.service:
+    name: nginx
+    enabled: true
+    state: started

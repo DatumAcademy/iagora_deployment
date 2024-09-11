@@ -1,0 +1,57 @@
+---
+# Install and configure MySQL database server.
+
+- name: Assert MySQL root password is set
+  ansible.builtin.assert:
+    msg: ERROR - mysql_root_password variable is not set
+    that:
+      - mysql_root_password is defined and mysql_root_password|length > 0
+
+- name: Assert MySQL Moodle database, password and username is set
+  ansible.builtin.assert:
+    msg: ERROR - mysql_moodle_database, mysql_moodle_password or
+       mysql_moodle_username variable is not set
+    that:
+      - mysql_moodle_database is defined and mysql_moodle_database|length > 0
+      - mysql_moodle_password is defined and mysql_moodle_password|length > 0
+      - mysql_moodle_username is defined and mysql_moodle_username|length > 0
+
+- name: Install MySQL server and python-pymysql
+  ansible.builtin.apt:
+    install_recommends: false
+    pkg:
+      - mysql-server
+      - python3-pymysql
+
+- name: Ensure MySQL service is enabled and started
+  ansible.builtin.service:
+    name: mysql
+    enabled: true
+    state: started
+
+- name: Setup MySQL root password
+  community.mysql.mysql_user:
+    column_case_sensitive: true
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+    password: "{{ mysql_root_password }}"
+    name: root
+
+- name: Set /root/.my.cnf file
+  ansible.builtin.template:
+    dest: /root/.my.cnf
+    mode: '0600'
+    src: templates/mysql/my.cnf.j2
+
+- name: Setup MySQL Moodle username and password
+  community.mysql.mysql_user:
+    column_case_sensitive: true
+    password: "{{ mysql_moodle_password }}"
+    priv: "{{ mysql_moodle_database }}.*:
+      SELECT,INSERT,UPDATE,DELETE,CREATE,CREATE TEMPORARY TABLES,DROP,INDEX,ALTER"
+    name: "{{ mysql_moodle_username }}"
+
+- name: Setup MySQL Moodle database
+  community.mysql.mysql_db:
+    collation: utf8mb4_unicode_ci
+    encoding: utf8mb4
+    name: "{{ mysql_moodle_username }}"

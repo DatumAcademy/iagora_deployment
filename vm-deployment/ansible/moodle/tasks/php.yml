@@ -1,0 +1,52 @@
+---
+# Install and configure php.
+
+- name: Install PHP PPA (Personal Package Archive) dependencies
+  ansible.builtin.apt:
+    install_recommends: false
+    pkg:
+      - apt-transport-https
+      - ca-certificates
+      - dirmngr
+      - gnupg
+      - lsb-release
+      - software-properties-common
+
+- name: Add PHP PPA
+  ansible.builtin.apt_repository:
+    repo: 'ppa:ondrej/php'
+
+- name: Install PHP-FPM (FastCGI Process Manager) and PHP extensions
+  ansible.builtin.apt:
+    install_recommends: false
+    pkg:
+      - php8.3-cli
+      - php8.3-common
+      - php8.3-curl
+      - php8.3-fpm
+      - php8.3-gd
+      - php8.3-intl
+      - php8.3-ldap
+      - php8.3-mcrypt
+      - php8.3-mbstring
+      - php8.3-mysql
+      - php8.3-soap
+      - php8.3-xml
+      - php8.3-xmlrpc
+      - php8.3-zip
+
+- name: Override PHP configuration with custom php.ini
+  ansible.builtin.copy:
+    src: files/php/99.overrides.php.ini
+    dest: "{{ php_fpm_overrides_config_path }}"
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - Restart PHP-FPM service
+
+- name: Ensure PHP-FPM service is enabled and started
+  ansible.builtin.service:
+    name: php8.3-fpm
+    enabled: true
+    state: started

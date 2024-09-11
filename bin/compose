@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+declare PODMAN_USER
+PODMAN_USER="$(id -u)"
+
+PODMAN_USER=${PODMAN_USER} podman compose "$@"

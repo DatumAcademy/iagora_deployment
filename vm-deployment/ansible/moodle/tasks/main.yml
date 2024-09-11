@@ -1,0 +1,17 @@
+---
+- name: Update APT (Advanced Packaging Tool) cache
+  ansible.builtin.apt:
+    update_cache: true
+    upgrade: true
+
+- name: Setup PHP
+  ansible.builtin.import_tasks: php.yml
+
+- name: Setup nginx
+  ansible.builtin.import_tasks: nginx.yml
+
+- name: Setup MySQL
+  ansible.builtin.import_tasks: mysql.yml
+
+- name: Setup Moodle
+  ansible.builtin.import_tasks: moodle.yml

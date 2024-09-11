@@ -1,0 +1,87 @@
+---
+# Install and configure Moodle.
+
+- name: Install git to checkout Moodle repository and acl to become nginx user
+  ansible.builtin.apt:
+    pkg:
+      - acl
+      - git
+    install_recommends: false
+
+- name: Assert Moodle version is set
+  ansible.builtin.assert:
+    msg: ERROR - moodle_version_tag variable is not set
+    that:
+      - moodle_version_tag is defined
+      - moodle_version_tag is match('v[0-9]+.[0-9]+.[0-9]+')
+
+- name: Assert Moodle admin email, username and password is set
+  ansible.builtin.assert:
+    msg: ERROR - moodle_admin_email, moodle_admin_password or
+      moodle_admin_username variable is not set
+    that:
+      - moodle_admin_email is defined and moodle_admin_email|length > 0
+      - moodle_admin_password is defined and moodle_admin_password|length > 0
+      - moodle_admin_username is defined and moodle_admin_username|length > 0
+
+- name: Assert Moodle site name, site short name and support email is set
+  ansible.builtin.assert:
+    msg: ERROR - moodle_site_name, moodle_site_short_name or
+      moodle_support_email variable is not set
+    that:
+      - moodle_site_name is defined and moodle_site_name|length > 0
+      - moodle_site_short_name is defined and moodle_site_short_name|length > 0
+      - moodle_support_email is defined and moodle_support_email|length > 0
+
+- name: Assert Moodle external URL is set
+  ansible.builtin.assert:
+    msg: ERROR - moodle_wwwroot_url variable is not set
+    that:
+      - moodle_wwwroot_url is defined and moodle_wwwroot_url|length > 0
+
+- name: Checkout Moodle git repository
+  ansible.builtin.git:
+    depth: 1
+    dest: "{{ moodle_install_path }}"
+    repo: git://git.moodle.org/moodle.git
+    single_branch: true
+    version: "{{ moodle_version_tag }}"
+
+- name: Setup Moodle data directory
+  ansible.builtin.file:
+    mode: '2700'
+    owner: "{{ nginx_user }}"
+    group: "{{ nginx_user }}"
+    path: "{{ moodle_data_directory_path }}"
+    state: directory
+
+- name: Configure Moodle
+  ansible.builtin.template:
+    dest: "{{ moodle_install_path }}/config.php"
+    mode: '0400'
+    owner: "{{ nginx_user }}"
+    group: root
+    src: templates/moodle/config.php.j2
+
+- name: Query MySQL Moodle tables
+  community.mysql.mysql_query:
+    login_db: "{{ mysql_moodle_database }}"
+    query: SHOW TABLES like 'mdl\_%'
+  register: mysql_moodle_tables
+
+- name: Migrate Moodle database when no Moodle tables are found
+  ansible.builtin.command:
+    cmd: /usr/bin/php
+      -c "{{ php_fpm_overrides_config_path }}"
+      "{{ moodle_install_path }}/admin/cli/install_database.php"
+      --agree-license
+      --adminemail="{{ moodle_admin_email }}"
+      --adminpass="{{ moodle_admin_password }}"
+      --adminuser="{{ moodle_admin_username }}"
+      --fullname="{{ moodle_site_name }}"
+      --shortname="{{ moodle_site_short_name }}"
+      --supportemail="{{ moodle_support_email }}"
+  changed_when: true
+  become: true
+  become_user: "{{ nginx_user }}"
+  when: mysql_moodle_tables.rowcount[0] == 0

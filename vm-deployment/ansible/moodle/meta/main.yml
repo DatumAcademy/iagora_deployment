@@ -1,0 +1,11 @@
+galaxy_info:
+  author: Datum Academy
+  description: All in one Moodle deployment on a dedicated Virtual Machine
+  company: Datum Academy
+  license: MIT
+
+  min_ansible_version: "2.17"
+
+  galaxy_tags: ["moodle"]
+
+dependencies: []

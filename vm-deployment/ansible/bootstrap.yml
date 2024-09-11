@@ -1,0 +1,6 @@
+---
+- name: Bootstrap moodle server
+  hosts: moodle_all_in_one_vm
+  become: true
+  roles:
+    - moodle
