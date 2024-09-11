@@ -1,0 +1,16 @@
+services:
+  ansible:
+    build:
+      context: tools/ansible
+      args:
+        PODMAN_USER: ${PODMAN_USER:-1000}
+    volumes:
+      - .:/app
+      - ./tools/ansible/etc:/etc/ansible
+      - ./tools/ansible/.ssh:/home/ansible/.ssh
+
+  ubuntu:
+    build:
+      context: tools/ubuntu
+    ports:
+      - 8080:8080

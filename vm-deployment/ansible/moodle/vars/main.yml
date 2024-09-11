@@ -1,0 +1,5 @@
+---
+moodle_install_path: /var/www/html/moodle
+moodle_data_directory_path: /var/www/moodledata
+nginx_user: www-data
+php_fpm_overrides_config_path: /etc/php/8.3/fpm/conf.d/99.overrides.php.ini

@@ -1,0 +1,25 @@
+[all:vars]
+ansible_user = iagora
+
+[moodle_all_in_one_vm]
+all_in_one_vm ansible_host=ubuntu
+
+[moodle_all_in_one_vm:vars]
+; Moodle
+moodle_admin_email     =
+moodle_admin_password  =
+moodle_admin_username  =
+moodle_site_name       =
+moodle_site_short_name =
+moodle_support_email   =
+moodle_version_tag     = v4.4.3
+moodle_wwwroot_url     = http://localhost:8080
+
+; MySQL
+mysql_moodle_database  =
+mysql_moodle_password  =
+mysql_moodle_username  =
+mysql_root_password    =
+
+; Nginx
+nginx_port             = 8080

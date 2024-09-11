@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+WORKING_DIRECTORY="$(dirname -- "${BASH_SOURCE[0]}")"
+
+# shellcheck disable=SC1091
+source "${WORKING_DIRECTORY}/compose" run --rm ansible "$@"

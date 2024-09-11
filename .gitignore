@@ -1,2 +1,12 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
+
+# Secrets
+keys/
+.ssh/
+
+# Ansible inventory
+tools/ansible/etc/hosts
+
+# Python environments
+venv/
